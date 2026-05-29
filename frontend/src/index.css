@@ -1,0 +1,268 @@
+@import "tailwindcss";
+
+/* @font-face {
+  font-family: "Arvo Regular";
+  src: url("./assets/font/Arvo-Regular.ttf") format("truetype");
+} */
+
+@font-face {
+  font-family: "Helvetica";
+  src: url("./assets/font/Helvetica.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inria Serif";
+  src: url("./assets/font/InriaSerif-Regular.ttf") format("truetype");
+}
+
+@theme {
+  /* === Existing App Colors (for dashboard/core pages) === */
+  --color-primary: #519a66;
+  --background-image-gradient: linear-gradient(
+    180deg,
+    #a1c270 0%,
+    #35af4f 100%
+  );
+  --font-helvetica: "Helvetica";
+  --font-inria: "Inria Serif";
+
+  /* === Landing Page Design System === */
+  --color-lp: #173D2D;
+  --color-lp-gray: #303030;
+  --color-lp-light: #1e5240;
+  --color-lp-accent: #6FA982;
+  /* --color-lp-bg: #F7F4EC; */
+  /* --color-lp-bg: #F0FFDF; */
+  --color-lp-bg: #E8EDF2;
+  --color-lp-surface: #FFFFFF;
+  --color-lp-error: #D84E3F;
+  --color-lp-warn: #C68B44;
+  --color-lp-text: #2D3748;
+  --color-lp-muted: #4A5568;
+  --color-lp-outline: #DDE7D8;
+  --color-lp-outline-alt: #E2E8F0;
+
+  --shadow-lp-soft: 0 10px 40px -10px rgba(23, 61, 45, 0.08);
+  --shadow-lp-sm: 0 2px 8px -2px rgba(23, 61, 45, 0.05);
+
+  --font-jakarta: "Plus Jakarta Sans", sans-serif;
+}
+
+@layer base {
+  p {
+    @apply text-[14px] md:text-[18px] font-normal font-helvetica;
+  }
+  h2 {
+    @apply text-[32px] md:text-[54px] font-helvetica;
+  }
+  h4 {
+    @apply font-helvetica;
+  }
+}
+
+@layer utilities {
+  .shadow-custom {
+    box-shadow:
+      rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset,
+      rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset,
+      rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset,
+      rgba(0, 0, 0, 0.06) 0px 2px 1px,
+      rgba(0, 0, 0, 0.09) 0px 4px 2px,
+      rgba(0, 0, 0, 0.09) 0px 8px 4px,
+      rgba(0, 0, 0, 0.09) 0px 16px 8px,
+      rgba(0, 0, 0, 0.09) 0px 32px 16px;
+  }
+  .pdf-mode * {
+    color: #000 !important;
+    background-color: #fff !important;
+    border-color: #e5e7eb !important;
+    box-shadow: none !important;
+  }
+
+  /* Hindari elemen kepotong */
+  .avoid-break {
+    page-break-inside: avoid;
+  }
+}
+
+@layer components {
+  /* === 1. LAYOUT UMUM === */
+  .sections {
+    @apply w-full mx-auto flex flex-col;
+  }
+
+  .containers {
+    @apply w-full max-w-490 py-10 md:py-20  justify-center mx-auto px-5 md:px-14 overflow-hidden relative;
+  }
+
+  /* === 2. LANDING PAGE CONTAINER === */
+  .container-lp {
+    @apply max-w-[1920px] my-0 mx-auto px-[24px] md:px-[40px] py-[40px] md:py-[80px];
+  }
+
+  /* === 3. NAVBAR (old - kept for backward compat) === */
+  .header {
+    @apply fixed w-full top-0 left-0 z-50 transition-all duration-400 ease-in-out;
+  }
+
+  .navbar {
+    @apply flex justify-between items-center transition-all duration-400 px-0 md:px-8 ease-in-out;
+
+    /* DI MOBILE: Nempel penuh tanpa margin. DI DESKTOP (md): Mengambang seperti kapsul */
+    @apply w-full my-0 md:my-4 mx-auto max-w-full md:max-w-225! bg-[#ffffff]/5 backdrop-blur-md rounded-none md:rounded-[4rem];
+    @apply outline-none md:outline outline-1 outline-white/10 -outline-offset-1;
+  }
+
+  .nav-logo {
+    @apply font-bold text-2xl text-white relative z-999; /* z-50 agar logo tetap di atas saat menu mobile terbuka */
+  }
+
+  .nav-menu {
+    /* --- MOBILE STATE (Sembunyi di kiri) --- */
+    /* Posisi fixed, full screen, background gelap, geser ke kiri -100% */
+    @apply fixed top-0 left-[-100%] w-full h-screen bg-[#1e1e1e]/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8 transition-all duration-500 ease-in-out z-40;
+
+    /* --- DESKTOP STATE (Normal) --- */
+    /* Kembalikan ke posisi semula di layar besar */
+    @apply md:static md:flex-row md:w-auto md:h-auto md:bg-transparent md:backdrop-blur-none md:gap-10 md:left-0;
+  }
+
+  /* KUNCI HAMBURGER MENU: Muncul sebagai dropdown di mobile saat class .active ditambahkan */
+  .nav-menu.active {
+    @apply left-0; /* Meluncur mulus menutupi layar */
+  }
+
+  .nav-link {
+    @apply relative font-helvetica text-3xl md:text-[16px] text-gray-300  transition-colors duration-300 no-underline;
+  }
+
+  .nav-link.scrolled {
+    @apply text-gray-300 md:text-gray-600; /* Teks tetap terang di mobile karena background menu kita buat gelap */
+  }
+
+  /* Garis bawah animasi */
+  .nav-link::after {
+    @apply content-[''] absolute -bottom-1 left-0 w-0 h-[2px] bg-white transition-all duration-300 ease-in-out;
+  }
+
+  .nav-link.scrolled::after {
+    @apply content-[''] absolute -bottom-1 left-0 w-0 h-[2px] bg-primary transition-all duration-300 ease-in-out;
+  }
+
+  /* Hover & Active State */
+  .nav-link:hover,
+  .nav-link.active {
+    @apply text-white!;
+  }
+
+  .nav-link.scrolled:hover,
+  .nav-link.active.scrolled {
+    @apply text-white md:text-primary!;
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    @apply w-full;
+  }
+
+  /* Efek navbar saat scroll (DIKUNCI HANYA UNTUK DESKTOP dengan md:) */
+  .header.scrolled .navbar {
+    @apply md:max-w-full! md:my-0 md:rounded-none outline-transparent border-none;
+  }
+
+  /* === 4. HAMBURGER MENU === */
+  .hamburger {
+    @apply block relative z-50 md:hidden! cursor-pointer;
+  }
+
+  .bar {
+    @apply block w-[25px] h-[3px] mx-auto my-[5px] bg-white transition-all duration-300 ease-in-out;
+  }
+
+  /* Bonus: Animasi Ikon Hamburger berubah jadi "X" saat menu terbuka */
+  .hamburger.active .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  .hamburger.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+  .hamburger.active .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  /* === 5. CORE APP LAYOUT (DASHBOARD DLL) === */
+  .core-layout {
+    @apply w-full max-w-md md:max-w-[1920px] h-screen mx-auto flex flex-col md:flex-row-reverse bg-white font-helvetica overflow-hidden relative;
+  }
+
+  .core-content {
+    @apply flex flex-col flex-1 h-full w-full overflow-hidden;
+  }
+
+  .bottom-menu-active-indicator {
+    left: 0.75rem;
+    right: 0;
+    border-radius: 9999px 0 0 9999px;
+    background: #fff;
+    overflow: visible;
+    will-change: transform, height;
+  }
+
+  .bottom-menu-active-indicator::before,
+  .bottom-menu-active-indicator::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .bottom-menu-active-indicator::before {
+    top: -3rem;
+    box-shadow: 2.125rem 2.125rem 0 0.625rem #fff;
+  }
+
+  .bottom-menu-active-indicator::after {
+    bottom: -3rem;
+    box-shadow: 2.125rem -2.125rem 0 0.625rem #fff;
+  }
+}
+
+.shadow-custom {
+  box-shadow:
+    rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset,
+    rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset,
+    rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset,
+    rgba(0, 0, 0, 0.06) 0px 2px 1px,
+    rgba(0, 0, 0, 0.09) 0px 4px 2px,
+    rgba(0, 0, 0, 0.09) 0px 8px 4px,
+    rgba(0, 0, 0, 0.09) 0px 16px 8px,
+    rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
+@keyframes bounceScale {
+  0%, 100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.animate-bounce-scale {
+  animation: bounceScale 1.8s ease-in-out infinite;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+html,
+body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
