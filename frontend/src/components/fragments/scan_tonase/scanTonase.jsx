@@ -358,9 +358,11 @@ const ScanTonase = () => {
               beratSampleKg={beratSampleKg}
               faktorEkstrapolasi={faktorEkstrapolasi}
               fotoHasilAI={fotoHasilAI}
+              detailDeteksi={hasilEstimasi.detailDeteksi}
               jumlahTerdeteksi={jumlahTerdeteksi}
               lahanPilihan={lahanPilihan}
               lightboxIndex={lightboxIndex}
+              persentase={persentase}
               resetScan={resetScan}
               setLightboxIndex={setLightboxIndex}
               simpanAnalisa={simpanAnalisa}

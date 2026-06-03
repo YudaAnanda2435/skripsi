@@ -20,7 +20,7 @@ const SellingPriceToolbar = ({
             value={pencarianHarga}
             onChange={(event) => setPencarianHarga(event.target.value)}
             placeholder="Cari varietas cabai..."
-            className="h-14 w-full rounded-lg border border-[#c1c8c2] bg-[#f6f3eb] px-12 text-[18px] text-[#1c1c17] outline-none transition-colors placeholder:text-[#717973] focus:border-[#002719] focus:ring-2 focus:ring-[#002719]/10"
+            className="h-12 w-full rounded-lg border border-[#c1c8c2] bg-[#f6f3eb] px-12 text-[18px] text-[#1c1c17] outline-none transition-colors placeholder:text-[#717973] focus:border-[#002719] focus:ring-2 focus:ring-[#002719]/10"
           />
         </div>
       </label>

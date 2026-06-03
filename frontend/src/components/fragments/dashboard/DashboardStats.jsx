@@ -28,8 +28,10 @@ const DashboardStats = ({ dataDashboardTampil }) => (
         <span
           className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full w-fit ${dataDashboardTampil.trenPendapatanStatus === "naik" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}
         >
-          {dataDashboardTampil.trenPendapatanStatus === "naik" ? "â†‘" : "â†“"}{" "}
-          +{dataDashboardTampil.trenPendapatanPersen}% dari minggu lalu
+          {dataDashboardTampil.trenPendapatanStatus === "naik"
+            ? "Naik"
+            : "Turun"}{" "}
+          {dataDashboardTampil.trenPendapatanPersen}% dari minggu lalu
         </span>
       )}
     </div>
@@ -61,8 +63,8 @@ const DashboardStats = ({ dataDashboardTampil }) => (
         <span
           className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full w-fit ${dataDashboardTampil.trenPanenStatus === "naik" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}
         >
-          {dataDashboardTampil.trenPanenStatus === "naik" ? "â†‘" : "â†“"}{" "}
-          +{dataDashboardTampil.trenPanenPersen}% dari minggu lalu
+          {dataDashboardTampil.trenPanenStatus === "naik" ? "Naik" : "Turun"}{" "}
+          {dataDashboardTampil.trenPanenPersen}% dari minggu lalu
         </span>
       )}
     </div>

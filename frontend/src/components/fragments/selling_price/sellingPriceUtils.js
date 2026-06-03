@@ -1,5 +1,13 @@
 export const formatRupiah = (nilai) => Number(nilai || 0).toLocaleString("id-ID");
 
+export const formatTanggalHarga = (item) =>
+  item?.terakhir_update ||
+  item?.terakhirUpdate ||
+  item?.updated_at ||
+  item?.created_at ||
+  item?.tanggal ||
+  "-";
+
 export const hitungHargaTertinggi = (daftarHarga) =>
   daftarHarga.reduce(
     (tertinggi, item) => Math.max(tertinggi, Number(item.harga || 0)),

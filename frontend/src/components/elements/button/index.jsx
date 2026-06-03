@@ -34,7 +34,7 @@ const ButtonSecondary = ({
       <span className="pl-2"> Memproses...</span>
     </>
   ) : (
-    <div className="flex items-center text-[16px] md:text-[18px] font-helvetica leading-5 tracking-[1px]">
+    <div className="flex items-center text-[16px]! md:text-[18px] font-helvetica leading-5 tracking-normal">
       {children}
       <svg
         className="w-5.5 ml-2 transition-transform duration-300 group-hover:translate-x-1"

@@ -18,76 +18,76 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("accessToken");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+const clearSession = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("accessToken");
+};
 
-// 1. Pencegat Permintaan: Menyisipkan token ke setiap request
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  },
+  (error) => Promise.reject(error),
 );
 
-// 2. Pencegat Balasan: Menangani eror 401 secara global
 api.interceptors.response.use(
-  (res) => res,
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest.retry_) {
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        })
-          .then((token) => {
-            originalRequest.headers.Authorization = "Bearer" + token;
-            return api(originalRequest);
-          })
-        .catch((err)=> Promise.reject(err))
-      }
-      originalRequest._retry = true;
-      isRefreshing = true;
-
-      const refreshToken = localStorage.getItem("refreshToken");
-
-      try {
-        const { data } = await axios.post(
-          "http://localhost:8000/refresh",
-          { refreshToken }
-        );
-        localStorage.setItem("accessToken", data.accessToken);
-
-        processQueue(null, data.accessToken);
-
-        originalRequest.headers.Authorization =
-          "Bearer" + data.accessToken;
-        
-        return api(originalRequest)
-      } catch (error) {
-        processQueue(error, null);
-        localStorage.clear();
-        window.location.href = "./login";
-        
-        return Promise.reject(error)
-        
-      } finally {
-        isRefreshing = false;
-      }
+    if (!originalRequest || error.response?.status !== 401 || originalRequest._retry) {
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
-)
+
+    if (isRefreshing) {
+      return new Promise((resolve, reject) => {
+        failedQueue.push({ resolve, reject });
+      }).then((token) => {
+        originalRequest.headers.Authorization = `Bearer ${token}`;
+        return api(originalRequest);
+      });
+    }
+
+    originalRequest._retry = true;
+    isRefreshing = true;
+
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    if (!refreshToken) {
+      clearSession();
+      window.dispatchEvent(new Event("agro:session-expired"));
+      window.location.href = "/login";
+      return Promise.reject(error);
+    }
+
+    try {
+      const { data } = await axios.post("http://localhost:8000/refresh", {
+        refreshToken,
+      });
+
+      localStorage.setItem("token", data.accessToken);
+      localStorage.removeItem("accessToken");
+      processQueue(null, data.accessToken);
+
+      originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+      return api(originalRequest);
+    } catch (refreshError) {
+      processQueue(refreshError, null);
+      clearSession();
+      window.dispatchEvent(new Event("agro:session-expired"));
+      window.location.href = "/login";
+      return Promise.reject(refreshError);
+    } finally {
+      isRefreshing = false;
+    }
+  },
+);
 
 export default api;

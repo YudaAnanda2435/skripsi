@@ -1,4 +1,34 @@
+import { useEffect, useState } from "react";
+
+const pipelineSteps = [
+  {
+    icon: "image",
+    title: "1. Image Input & Pre-processing",
+    description: "Normalisasi gambar dan penyesuaian resolusi.",
+  },
+  {
+    icon: "memory",
+    title: "2. YOLOv8 Inference",
+    description: "Ekstraksi fitur dan prediksi bounding box secara real-time.",
+  },
+  {
+    icon: "calculate",
+    title: "3. Ekstrapolasi Data",
+    description: "(Rata-rata buah × Est. berat) × Total Populasi.",
+  },
+];
+
 const Technology = () => {
+  const [activeStep, setActiveStep] = useState(0);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setActiveStep((currentStep) => (currentStep + 1) % pipelineSteps.length);
+    }, 3200);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
   return (
     <section id="teknologi" className="container-lp font-jakarta">
       <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -11,55 +41,60 @@ const Technology = () => {
           <div className="flex flex-col gap-4 relative">
             {/* Vertical Line */}
             <div className="absolute left-8 top-12 bottom-12 w-0.5 bg-lp-outline"></div>
+            <div
+              className="absolute left-8 top-12 w-0.5 bg-lp rounded-full transition-all duration-700 ease-out"
+              style={{
+                height: `${((activeStep + 1) / pipelineSteps.length) * 100}%`,
+                maxHeight: "calc(100% - 6rem)",
+              }}
+            ></div>
 
-            {/* Step 1 */}
-            <div className="flex items-center gap-6 bg-lp-bg p-5 md:p-6 rounded-2xl border border-lp-outline relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-lp-sm shrink-0">
-                <span className="material-symbols-outlined text-lp">image</span>
-              </div>
-              <div>
-                <span className="font-bold text-lp block text-base md:text-lg mb-1 font-jakarta">
-                  1. Image Input & Pre-processing
-                </span>
-                <span className="text-lp-muted text-sm font-jakarta">
-                  Normalisasi gambar dan penyesuaian resolusi.
-                </span>
-              </div>
-            </div>
+            {pipelineSteps.map((step, index) => {
+              const isActive = activeStep === index;
 
-            {/* Step 2 - Highlighted */}
-            <div className="flex items-center gap-6 bg-lp p-5 md:p-6 rounded-2xl shadow-lp-soft relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                <span className="material-symbols-outlined text-white">
-                  memory
-                </span>
-              </div>
-              <div>
-                <span className="font-bold text-white block text-base md:text-lg mb-1 font-jakarta">
-                  2. YOLOv8 Inference
-                </span>
-                <span className="text-white/80 text-sm font-jakarta">
-                  Ekstraksi fitur dan prediksi bounding box secara real-time.
-                </span>
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div className="flex items-center gap-6 bg-lp-bg p-5 md:p-6 rounded-2xl border border-lp-outline relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-lp-sm shrink-0">
-                <span className="material-symbols-outlined text-lp">
-                  calculate
-                </span>
-              </div>
-              <div>
-                <span className="font-bold text-lp block text-base md:text-lg mb-1 font-jakarta">
-                  3. Ekstrapolasi Data
-                </span>
-                <span className="text-lp-muted text-sm font-jakarta">
-                  (Rata-rata buah × Est. berat) × Total Populasi.
-                </span>
-              </div>
-            </div>
+              return (
+                <div
+                  className={`flex items-center gap-6 p-5 md:p-6 rounded-2xl border relative z-10 transition-all duration-700 ease-out ${
+                    isActive
+                      ? "bg-lp border-lp shadow-lp-soft translate-x-1 md:translate-x-4 "
+                      : "bg-lp-bg border-lp-outline translate-x-0 scale-100"
+                  }`}
+                  key={step.title}
+                >
+                  <div
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-lp-sm shrink-0 transition-all duration-700 ease-out ${
+                      isActive
+                        ? "bg-white/15 ring-4 ring-white/10"
+                        : "bg-white ring-0"
+                    }`}
+                  >
+                    <span
+                      className={`material-symbols-outlined transition-colors duration-700 ${
+                        isActive ? "text-white" : "text-lp"
+                      }`}
+                    >
+                      {step.icon}
+                    </span>
+                  </div>
+                  <div>
+                    <span
+                      className={`font-bold block text-base md:text-lg mb-1 font-jakarta transition-colors duration-700 ${
+                        isActive ? "text-white" : "text-lp"
+                      }`}
+                    >
+                      {step.title}
+                    </span>
+                    <span
+                      className={`text-sm font-jakarta transition-colors duration-700 ${
+                        isActive ? "text-white/80" : "text-lp-muted"
+                      }`}
+                    >
+                      {step.description}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 

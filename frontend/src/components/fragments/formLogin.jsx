@@ -38,6 +38,7 @@ const FormLogin = () => {
       });
 
       localStorage.setItem("token", respons.data.access_token);
+      localStorage.setItem("refreshToken", respons.data.refresh_token);
 
       // ── Toast sukses ──────────────────────────────────────────────────────
       showToast("Login berhasil! Selamat datang ✅", "success");

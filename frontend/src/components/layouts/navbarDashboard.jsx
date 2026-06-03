@@ -39,7 +39,7 @@ const TopNavbar = ({ breadcrumbs }) => {
   }, []);
 
   return (
-    <nav className="w-full flex items-center justify-between gap-1.5 md:gap-2 px-5 md:px-5 py-2.5 md:py-5 shrink-0 z-20 bg-transparent">
+    <nav className="w-full flex items-center justify-between gap-1.5 md:gap-2 px-5 md:px-5 py-2.5 md:py-3 shrink-0 z-20 bg-[#f6f3eb]">
       <div className="min-w-0 flex-1">
         {hideBreadcrumbs ? (
           <span className="max-w-[150px] truncate text-[30px] font-bold text-gray-900 transition-colors md:max-w-[240px] md:text-2xl font-jakarta">
@@ -54,7 +54,10 @@ const TopNavbar = ({ breadcrumbs }) => {
               }`;
 
               return (
-                <span key={`${item.label}-${index}`} className="flex min-w-0 items-center gap-2">
+                <span
+                  key={`${item.label}-${index}`}
+                  className="flex min-w-0 items-center gap-2"
+                >
                   {index > 0 && (
                     <span className="text-lg font-bold font-jakarta text-gray-300 md:text-2xl">
                       &gt;
@@ -65,7 +68,11 @@ const TopNavbar = ({ breadcrumbs }) => {
                       {item.label}
                     </Link>
                   ) : item.onClick && !isActive ? (
-                    <button type="button" onClick={item.onClick} className={`${labelClass} text-left`}>
+                    <button
+                      type="button"
+                      onClick={item.onClick}
+                      className={`${labelClass} text-left`}
+                    >
                       {item.label}
                     </button>
                   ) : (

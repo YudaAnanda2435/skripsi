@@ -35,10 +35,10 @@ const DashboardHeader = ({
             {translateCondition(weather.condition)}
           </p>
           <h2 className="text-3xl font-bold text-gray-900 leading-none">
-            {weather.temp}Â°C
+            {weather.temp} derajat C
           </h2>
           <p className="text-[11px] text-gray-500 mt-1">
-            Kelembaban {weather.humidity}% â€¢ Angin {weather.wind} Km/h
+            Kelembaban {weather.humidity}% - Angin {weather.wind} Km/h
           </p>
         </div>
         <img

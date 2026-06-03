@@ -97,6 +97,8 @@ const ProfilPage = () => {
     });
     if (!ok) return;
     localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("accessToken");
     navigate("/", { replace: true });
   };
 

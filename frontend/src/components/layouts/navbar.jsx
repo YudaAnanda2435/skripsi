@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { id: "faq", label: "FAQ" },
 ];
 
+
 const Navbar = () => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
@@ -93,9 +94,9 @@ const Navbar = () => {
             <button
               key={id}
               onClick={() => handleNavClick(id)}
-              className={`bg-transparent border-none cursor-pointer transition-colors duration-200 pb-1 font-jakarta text-sm font-medium ${
+              className={`bg-transparent  cursor-pointer transition-colors duration-200 font-jakarta text-sm font-medium ${
                 activeSection === id
-                  ? "text-lp border-b-2 border-lp"
+                  ? "text-lp border-b-2! border-lp!"
                   : "text-lp-muted hover:text-lp border-b-2 border-transparent"
               }`}
             >
