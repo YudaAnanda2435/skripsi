@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import api from "../../../api/axios";
 import BottomMenu from "../../layouts/bottomMenu";
@@ -30,6 +30,7 @@ const ScanTonase = () => {
   const [lahanPilihan, setLahanPilihan] = useState(null);
   const [bukaTutorial, setBukaTutorial] = useState(false);
   const [sedangMemproses, setSedangMemproses] = useState(false);
+  const [progressAI, setProgressAI] = useState(0);
   const [filterLahan, setFilterLahan] = useState("semua");
   const [pencarianLahan, setPencarianLahan] = useState("");
   const [hargaOtomatis, setHargaOtomatis] = useState(0);
@@ -55,14 +56,49 @@ const ScanTonase = () => {
 
   const location = useLocation();
   const { showToast } = useToast();
+  const progressIntervalRef = useRef(null);
 
   const resetScan = useCallback(() => {
+    setProgressAI(0);
     setLangkah(1);
     setLahanPilihan(null);
     setFoto({ lebat: null, sedang: null, kurang: null });
     setPratinjauFoto({ lebat: null, sedang: null, kurang: null });
     setHasilEstimasi(null);
   }, []);
+
+  const hentikanProgressAI = () => {
+    if (progressIntervalRef.current) {
+      window.clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+  };
+
+  const mulaiProgressAI = () => {
+    hentikanProgressAI();
+    setProgressAI(0);
+
+    const waktuMulai = Date.now();
+    progressIntervalRef.current = window.setInterval(() => {
+      const durasiBerjalan = Date.now() - waktuMulai;
+      const progressBertahap = 96 * (1 - Math.exp(-durasiBerjalan / 9000));
+
+      setProgressAI((progressSaatIni) =>
+        Math.max(progressSaatIni, Math.min(96, Math.round(progressBertahap))),
+      );
+    }, 180);
+  };
+
+  const selesaikanProgressAI = () => {
+    hentikanProgressAI();
+    setProgressAI(100);
+
+    return new Promise((resolve) => {
+      window.setTimeout(resolve, 500);
+    });
+  };
+
+  useEffect(() => () => hentikanProgressAI(), []);
 
   const pilihLahan = useCallback(
     async (lahan) => {
@@ -175,6 +211,7 @@ const ScanTonase = () => {
 
   const prosesYOLOv8 = async () => {
     setSedangMemproses(true);
+    mulaiProgressAI();
 
     const [resLebat, resSedang, resKurang] = await Promise.all([
       kirimGambarKeAI(foto.lebat),
@@ -188,6 +225,7 @@ const ScanTonase = () => {
       kurang: resKurang.gambar,
     });
 
+    await selesaikanProgressAI();
     setSedangMemproses(false);
 
     const jmlLebat = resLebat.jumlah;
@@ -348,7 +386,7 @@ const ScanTonase = () => {
           )}
 
           {langkah === 4 && sedangMemproses && (
-            <ProsesAiStep pratinjauFoto={pratinjauFoto} />
+            <ProsesAiStep pratinjauFoto={pratinjauFoto} progressAI={progressAI} />
           )}
 
           {langkah === 5 && hasilEstimasi && (

@@ -1,6 +1,6 @@
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "../fragments/pageTrasition";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { Navigate, Routes, Route, useLocation } from "react-router-dom";
 import LandingPage from "../../pages/landingPage";
 import LoginPage from "../../pages/loginPage";
 import RegisterPage from "../../pages/RegisterPage";
@@ -11,7 +11,16 @@ import BuktiAnalisaPage from "../../pages/buktiAnalisaPage";
 import HargaJualPage from "../../pages/sellingPrice";
 import Profil from "../../pages/ProfilPage";
 import ProtectedRoute from "../routes/ProtectedRoute";
+import { hasStoredSession } from "./authSession";
 import PanduanPage from "../../pages/panduanPage";
+
+const PublicRoute = ({ children }) => {
+  if (hasStoredSession()) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+};
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -25,9 +34,9 @@ function AnimatedRoutes() {
       {isLoginDashboard ? (
         <PageTransition key={location.pathname}>
           <Routes location={location}>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
+            <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+            <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
 
             <Route
               path="/dashboard"
@@ -90,9 +99,9 @@ function AnimatedRoutes() {
         </PageTransition>
       ) : (
         <Routes location={location}>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
+          <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+          <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
 
           <Route
             path="/dashboard"

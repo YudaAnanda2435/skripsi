@@ -243,14 +243,21 @@ DEVICE = get_device()
 if not Path(MODEL_PATH).exists():
     raise FileNotFoundError(f"Model tidak ditemukan: {MODEL_PATH}")
 
+# Lazy loading model
+detection_model = None
 
-# Model dipanggil satu kali saat server berjalan
-detection_model = AutoDetectionModel.from_pretrained(
-    model_type="yolov8",
-    model_path=MODEL_PATH,
-    confidence_threshold=CONFIDENCE_THRESHOLD,
-    device=DEVICE
-)
+def get_model():
+    global detection_model
+
+    if detection_model is None:
+        detection_model = AutoDetectionModel.from_pretrained(
+            model_type="yolov8",
+            model_path=MODEL_PATH,
+            confidence_threshold=CONFIDENCE_THRESHOLD,
+            device=DEVICE
+        )
+
+    return detection_model
 
 
 @router.post("/deteksi")
@@ -284,10 +291,10 @@ async def deteksi_cabai(file: UploadFile = File(...)):
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img_h, img_w = img.shape[:2]
         img_area = img_h * img_w
-
+        model = get_model()
         result = get_sliced_prediction(
     img_rgb,
-    detection_model,
+    model,
     slice_height=SLICE_HEIGHT,
     slice_width=SLICE_WIDTH,
     overlap_height_ratio=OVERLAP_HEIGHT_RATIO,

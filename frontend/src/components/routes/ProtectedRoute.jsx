@@ -1,13 +1,12 @@
 import { Navigate } from "react-router-dom";
+import { hasStoredSession } from "./authSession";
 
 const ProtectedRoute = ({ children }) => {
-    const token = localStorage.getItem("token");
+  if (!hasStoredSession()) {
+    return <Navigate to="/login" replace />;
+  }
 
-    if (!token) {
-        return <Navigate to="/login" replace />
-    }
-
-    return children;
-}
+  return children;
+};
 
 export default ProtectedRoute;

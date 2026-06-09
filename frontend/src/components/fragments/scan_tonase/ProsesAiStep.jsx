@@ -2,8 +2,11 @@ import { Check, Info, Sparkles, Wallet, Weight } from "lucide-react";
 import farmPlaceholder from "../../../assets/img/dashboard/farm-placeholder.png";
 import { kategoriSampel } from "./scanTonaseConstants";
 
-const ProsesAiStep = ({ pratinjauFoto }) => (
-  <div className="flex flex-col gap-6 font-jakarta">
+const ProsesAiStep = ({ pratinjauFoto, progressAI = 0 }) => {
+  const progress = Math.min(100, Math.max(0, Math.round(progressAI)));
+
+  return (
+    <div className="flex flex-col gap-6 font-jakarta">
     <div>
       <h2 className="mb-1 text-[28px] font-extrabold leading-9 text-[#173d2d]">
         Memproses Sampel dengan AI
@@ -53,10 +56,10 @@ const ProsesAiStep = ({ pratinjauFoto }) => (
               <Sparkles className="h-4 w-4 animate-spin" />
               Proses AI berjalan... Mohon tunggu sebentar.
             </span>
-            <span className="text-sm font-extrabold text-[#173d2d]">65%</span>
+            <span className="text-sm font-extrabold text-[#173d2d]">{progress}%</span>
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-[#e5e2da]">
-            <div className="relative h-full w-[65%] overflow-hidden rounded-full bg-[#173d2d]">
+            <div className="relative h-full overflow-hidden rounded-full bg-[#173d2d] transition-all duration-300 ease-out" style={{ width: `${progress}%` }}>
               <div className="ai-shimmer absolute inset-0 bg-white/25" />
             </div>
           </div>
@@ -126,6 +129,7 @@ const ProsesAiStep = ({ pratinjauFoto }) => (
       </div>
     </div>
   </div>
-);
+  );
+};
 
 export default ProsesAiStep;
