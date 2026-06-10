@@ -1,7 +1,7 @@
 import Form from "../elements/input/index";
 import ButtonSecondary from "../elements/button";
 import { useRef, useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../services/api";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "../ui/toast/ToastContext";
 
@@ -32,7 +32,7 @@ const FormLogin = () => {
     const emailBersih = email.trim();
 
     try {
-      const respons = await axios.post("http://127.0.0.1:8000/login", {
+      const respons = await api.post("/login", {
         email: emailBersih,
         password: password,
       });

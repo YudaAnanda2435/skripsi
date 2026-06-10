@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../../../api/axios";
+import { OPENWEATHER_API_KEY, OPENWEATHER_API_URL } from "../../../config/api";
 import BottomMenu from "../../layouts/bottomMenu";
 import TopNavbar from "../../layouts/navbarDashboard";
 import DashboardHeader from "./DashboardHeader";
@@ -63,11 +64,14 @@ const Dashboard = () => {
   }, [location.pathname, location.state?.fromLogin, navigate]);
 
   const fetchWeather = async (lat, lon) => {
-    const API_KEY = "7a919905a688abfb83ec1bbe833ca34a";
     try {
-      const res = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`,
-      );
+      const params = new URLSearchParams({
+        lat,
+        lon,
+        appid: OPENWEATHER_API_KEY,
+        units: "metric",
+      });
+      const res = await fetch(`${OPENWEATHER_API_URL}?${params}`);
       const data = await res.json();
       setLocationName(`${data.name}, ${data.sys.country}`);
       setWeather({

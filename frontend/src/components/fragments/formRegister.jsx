@@ -1,7 +1,7 @@
 import Form from "../elements/input/index";
 import ButtonSecondary from "../elements/button/index";
 import { useRef, useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../services/api";
 import { useNavigate, Link } from "react-router-dom";
 
 const FormRegister = () => {
@@ -32,7 +32,7 @@ const FormRegister = () => {
     setIsLoading(true);
 
     try {
-      await axios.post("http://127.0.0.1:8000/register", {
+      await api.post("/register", {
         nama: nama.trim(),
         email: email.trim(),
         password: password,

@@ -1,23 +1,32 @@
+import os
+
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from core.database import engine, Base
 
-# Panggil semua rute dari folder routers
+from core.database import engine, Base
 from routers import auth, lahan, deteksi, harga, riwayat
+
+load_dotenv()
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="ChiliVision API")
 
+origins = [
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", "").split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Daftarkan rute ke dalam aplikasi utama
 app.include_router(auth.router)
 app.include_router(lahan.router)
 app.include_router(deteksi.router)
