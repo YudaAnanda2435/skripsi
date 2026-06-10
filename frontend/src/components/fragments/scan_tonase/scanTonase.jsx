@@ -26,6 +26,7 @@ const stepLabels = {
 
 const ScanTonase = () => {
   const [daftarLahan, setDaftarLahan] = useState([]);
+  const [isLoadingLahan, setIsLoadingLahan] = useState(true);
   const [langkah, setLangkah] = useState(1);
   const [lahanPilihan, setLahanPilihan] = useState(null);
   const [bukaTutorial, setBukaTutorial] = useState(false);
@@ -134,6 +135,11 @@ const ScanTonase = () => {
       })
       .catch((error) => {
         console.error("Gagal mengambil data lahan:", error);
+      })
+      .finally(() => {
+        if (!dibatalkan) {
+          setIsLoadingLahan(false);
+        }
       });
 
     if (lahanTitipan) {
@@ -360,6 +366,7 @@ const ScanTonase = () => {
               daftarLahan={daftarLahan}
               daftarLahanTampil={daftarLahanTampil}
               dapatkanStatusLahan={dapatkanStatusLahan}
+              isLoadingLahan={isLoadingLahan}
               filterLahan={filterLahan}
               pencarianLahan={pencarianLahan}
               pilihLahan={pilihLahan}

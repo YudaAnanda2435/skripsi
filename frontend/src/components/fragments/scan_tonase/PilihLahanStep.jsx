@@ -15,6 +15,7 @@ const PilihLahanStep = ({
   daftarLahan,
   daftarLahanTampil,
   dapatkanStatusLahan,
+  isLoadingLahan,
   filterLahan,
   pencarianLahan,
   pilihLahan,
@@ -64,12 +65,20 @@ const PilihLahanStep = ({
         />
       </label>
     </div>
-
-    {daftarLahan.length === 0 ? (
+    {isLoadingLahan ? (
       <div className="rounded-xl border border-dashed border-gray-300 bg-white/70 p-8 text-center">
         <CircleDashed className="mx-auto mb-3 h-8 w-8 animate-spin text-[#316947]" />
         <p className="text-sm font-bold text-gray-500">
           Memuat data lahan...
+        </p>
+      </div>
+    ) : daftarLahan.length === 0 ? (
+      <div className="rounded-xl border border-dashed border-gray-300 bg-white/70 p-8 text-center">
+        <h3 className="text-lg font-bold text-gray-800">
+          Belum Ada Lahan
+        </h3>
+        <p className="mt-2 text-sm text-gray-500">
+          Anda belum mendaftarkan lahan. Tambahkan lahan baru untuk memulai scan tonase.
         </p>
       </div>
     ) : daftarLahanTampil.length === 0 ? (
