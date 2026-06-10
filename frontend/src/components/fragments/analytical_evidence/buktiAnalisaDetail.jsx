@@ -1,5 +1,5 @@
 import { Download, ShieldCheck, Trash2 } from "lucide-react";
-import { VISUAL_SAMPLES, formatRupiah } from "./buktiAnalisaUtils";
+import { VISUAL_SAMPLES, formatRupiah, hitungCabaiPerSampel } from "./buktiAnalisaUtils";
 
 const DetailBuktiAnalisa = ({
   areaLaporanRef,
@@ -29,8 +29,7 @@ const LaporanBuktiAnalisa = ({ areaLaporanRef, buktiAktif }) => (
     <InformasiAnalisa buktiAktif={buktiAktif} />
     <VisualisasiSampel buktiAktif={buktiAktif} />
     <p className="border-t border-[#c1c8c2]/50 pt-8 text-center text-[11px] italic text-[#717973]">
-      Dokumen ID: {buktiAktif.id} â€¢ Dihasilkan secara otomatis oleh sistem AI
-      ChiliVision.
+      Dokumen nomor {buktiAktif.id}. Dibuat otomatis oleh sistem AI ChiliVision.
     </p>
   </div>
 );
@@ -91,15 +90,15 @@ const KartuInformasiPengujian = ({ buktiAktif }) => (
   <div className="col-span-1 flex flex-col justify-between rounded-3xl border border-[#c1c8c2] bg-white p-8 shadow-sm md:col-span-4">
     <div>
       <h4 className="text-sm font-extrabold uppercase tracking-wider text-[#414844]">
-        Informasi Pengujian
+        Waktu Analisa
       </h4>
       <p className="mt-3 text-[16px] text-[#1c1c17]">
-        {buktiAktif.tanggal} â€¢ {buktiAktif.waktu}
+        {buktiAktif.tanggal}, {buktiAktif.waktu}
       </p>
     </div>
     <div className="mt-8">
       <p className="mb-1 text-xs font-semibold text-[#414844]">
-        Total Populasi
+        Jumlah Tanaman
       </p>
       <div className="flex items-baseline gap-2">
         <p className="text-[40px] font-extrabold leading-none text-[#1c1c17]">
@@ -128,11 +127,11 @@ const KartuParameterAi = ({ buktiAktif }) => (
       </div>
       <div className="rounded-2xl bg-[#f6f3eb] p-6">
         <p className="mb-2 text-xs font-semibold text-[#414844]">
-          Total Objek Terdeteksi (Sampel)
+          Total Cabai Terdeteksi
         </p>
         <p className="text-[26px] font-extrabold text-[#1c1c17]">
           {formatRupiah(buktiAktif.cabaiTerdeteksi)}{" "}
-          <span className="text-base font-normal text-[#414844]">Butir</span>
+          <span className="text-base font-normal text-[#414844]">cabai</span>
         </p>
       </div>
     </div>
@@ -193,7 +192,10 @@ const LabelProporsi = ({ color, label, value }) => (
   </div>
 );
 
-const VisualisasiSampel = ({ buktiAktif }) => (
+const VisualisasiSampel = ({ buktiAktif }) => {
+  const jumlahCabaiPerSampel = hitungCabaiPerSampel(buktiAktif);
+
+  return (
   <section className="space-y-8 pt-4">
     <div className="flex items-center justify-between gap-4">
       <h3 className="text-[32px] font-extrabold leading-10 text-[#1c1c17]">
@@ -210,15 +212,17 @@ const VisualisasiSampel = ({ buktiAktif }) => (
           buktiAktif={buktiAktif}
           index={index}
           item={item}
+          jumlahCabai={jumlahCabaiPerSampel[item.id]}
         />
       ))}
     </div>
   </section>
-);
+  );
+};
 
-const KartuVisualisasi = ({ buktiAktif, index, item }) => (
+const KartuVisualisasi = ({ buktiAktif, item, jumlahCabai }) => (
   <div
-    className={`group relative overflow-hidden rounded-3xl border border-[#c1c8c2]/60 bg-white shadow-md transition-shadow duration-300 hover:shadow-xl ${index === 1 ? "lg:translate-y-6" : ""}`}
+    className={`group relative overflow-hidden rounded-3xl border border-[#c1c8c2]/60 bg-white shadow-md transition-shadow duration-300 hover:shadow-xl`}
   >
     <div className="absolute left-4 top-4 z-10">
       <span
@@ -246,7 +250,10 @@ const KartuVisualisasi = ({ buktiAktif, index, item }) => (
       )}
     </div>
     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-white via-white/90 to-transparent p-6 pt-12">
-      <p className="text-sm font-semibold text-[#414844]">
+      <p className="text-sm font-extrabold text-[#002719]">
+        {formatRupiah(jumlahCabai)} cabai terdeteksi
+      </p>
+      <p className="mt-1 text-xs font-semibold text-[#414844]">
         Kepercayaan Deteksi: {item.conf}%
       </p>
     </div>

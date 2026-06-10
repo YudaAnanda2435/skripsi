@@ -1,5 +1,5 @@
 import jsPDF from "jspdf";
-import { PDF_SAMPLES, formatRupiah } from "./buktiAnalisaUtils";
+import { PDF_SAMPLES, formatRupiah, hitungCabaiPerSampel } from "./buktiAnalisaUtils";
 
 const normalisasiFotoPdf = (foto) => {
   if (!foto) return null;
@@ -124,7 +124,7 @@ export const buatLaporanPdf = async (buktiAktif, showToast) => {
     });
     tambahTeksPdf(
       pdf,
-      `${buktiAktif.tanggal} â€¢ ${buktiAktif.waktu}`,
+      `${buktiAktif.tanggal}, ${buktiAktif.waktu}`,
       margin + 8,
       48,
       {
@@ -179,7 +179,7 @@ export const buatLaporanPdf = async (buktiAktif, showToast) => {
     );
 
     tambahKartuPdf(pdf, margin, 116, 56, 36);
-    tambahTeksPdf(pdf, "Total Populasi", margin + 6, 128, {
+    tambahTeksPdf(pdf, "Jumlah Tanaman", margin + 6, 128, {
       size: 8,
       color: [65, 72, 68],
       style: "bold",
@@ -197,14 +197,14 @@ export const buatLaporanPdf = async (buktiAktif, showToast) => {
     );
 
     tambahKartuPdf(pdf, margin + 63, 116, 56, 36);
-    tambahTeksPdf(pdf, "Cabai Terdeteksi", margin + 69, 128, {
+    tambahTeksPdf(pdf, "Total Cabai", margin + 69, 128, {
       size: 8,
       color: [65, 72, 68],
       style: "bold",
     });
     tambahTeksPdf(
       pdf,
-      `${formatRupiah(buktiAktif.cabaiTerdeteksi)} Butir`,
+      `${formatRupiah(buktiAktif.cabaiTerdeteksi)} cabai`,
       margin + 69,
       142,
       {
@@ -255,7 +255,7 @@ export const buatLaporanPdf = async (buktiAktif, showToast) => {
       },
     );
     tambahKartuPdf(pdf, margin + 94, 184, 81, 22, [246, 243, 235]);
-    tambahTeksPdf(pdf, "Dokumen ID", margin + 100, 193, {
+    tambahTeksPdf(pdf, "Nomor Dokumen", margin + 100, 193, {
       size: 8,
       color: [65, 72, 68],
     });
@@ -344,10 +344,13 @@ export const buatLaporanPdf = async (buktiAktif, showToast) => {
       },
     );
 
+    const jumlahCabaiPerSampel = hitungCabaiPerSampel(buktiAktif);
     let posisiY = 46;
     PDF_SAMPLES.forEach((item) => {
       const foto = normalisasiFotoPdf(buktiAktif.foto?.[item.id]);
-      tambahKartuPdf(pdf, margin, posisiY, contentWidth, 68);
+      const jumlahCabai = jumlahCabaiPerSampel[item.id] || 0;
+
+      tambahKartuPdf(pdf, margin, posisiY, contentWidth, 76);
       tambahTeksPdf(pdf, item.label, margin + 7, posisiY + 11, {
         size: 12,
         color: item.color,
@@ -355,21 +358,32 @@ export const buatLaporanPdf = async (buktiAktif, showToast) => {
       });
       tambahTeksPdf(
         pdf,
-        `Kepercayaan Deteksi: ${item.confidence}%`,
+        `${formatRupiah(jumlahCabai)} cabai terdeteksi`,
         margin + 7,
-        posisiY + 21,
+        posisiY + 20,
+        {
+          size: 10,
+          color: [0, 39, 25],
+          style: "bold",
+        },
+      );
+      tambahTeksPdf(
+        pdf,
+        `Kepercayaan Deteksi: ${item.confidence}%`,
+        margin + 72,
+        posisiY + 20,
         {
           size: 9,
           color: [65, 72, 68],
         },
       );
-      tambahFotoPdf(pdf, foto, margin + 74, posisiY + 8, 101, 52);
-      posisiY += 77;
+      tambahFotoPdf(pdf, foto, margin + 7, posisiY + 27, contentWidth - 14, 43);
+      posisiY += 80;
     });
 
     tambahTeksPdf(
       pdf,
-      `Dokumen ID: ${buktiAktif.id} â€¢ Dihasilkan otomatis oleh sistem AI ChiliVision.`,
+      `Dokumen nomor ${buktiAktif.id}. Dibuat otomatis oleh sistem AI ChiliVision.`,
       margin,
       286,
       {
@@ -378,7 +392,6 @@ export const buatLaporanPdf = async (buktiAktif, showToast) => {
         maxWidth: contentWidth,
       },
     );
-
     const namaFile = `Laporan_YOLOv8_${buktiAktif.lahan.replace(/\s+/g, "_")}_${buktiAktif.tanggal.replace(/\s+/g, "")}.pdf`;
     pdf.save(namaFile);
     showToast("Laporan PDF berhasil dibuat.", "success");

@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import { MdOutlineDashboard } from "react-icons/md";
@@ -76,6 +76,7 @@ const BottomMenu = ({ className }) => {
   const menuRef = useRef(null);
   const activeIndicatorRef = useRef(null);
   const itemRefs = useRef({});
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const captureActiveIndicatorPosition = useCallback(() => {
     const currentPosition = getIndicatorPosition(activeIndicatorRef.current);
@@ -91,6 +92,30 @@ const BottomMenu = ({ className }) => {
     [location.pathname],
   );
 
+
+  const setMobileDrawerOpen = useCallback((isOpen) => {
+    setMobileMenuOpen(isOpen);
+    window.dispatchEvent(
+      new CustomEvent("chilivision:mobile-menu-state", { detail: { isOpen } }),
+    );
+  }, []);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape") setMobileDrawerOpen(false);
+    };
+    const handleToggleRequest = (event) => {
+      setMobileDrawerOpen(Boolean(event.detail?.isOpen));
+    };
+
+    window.addEventListener("keydown", handleEscape);
+    window.addEventListener("chilivision:mobile-menu-toggle", handleToggleRequest);
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+      window.removeEventListener("chilivision:mobile-menu-toggle", handleToggleRequest);
+    };
+  }, [setMobileDrawerOpen]);
+
   useLayoutEffect(() => {
     const activeElement = activeItem ? itemRefs.current[activeItem.id] : null;
     const indicator = activeIndicatorRef.current;
@@ -105,11 +130,6 @@ const BottomMenu = ({ className }) => {
       }
 
       gsap.killTweensOf(indicator);
-
-      if (window.innerWidth < 768) {
-        gsap.set(indicator, { autoAlpha: 0 });
-        return;
-      }
 
       const nextPosition = {
         y: activeElement.offsetTop,
@@ -153,7 +173,7 @@ const BottomMenu = ({ className }) => {
       captureActiveIndicatorPosition();
       window.removeEventListener("resize", animateIndicator);
     };
-  }, [activeItem, captureActiveIndicatorPosition]);
+  }, [activeItem, captureActiveIndicatorPosition, mobileMenuOpen]);
 
   const handleLogout = async () => {
     const ok = await confirm("Anda akan keluar dari sesi ini.", {
@@ -170,88 +190,100 @@ const BottomMenu = ({ className }) => {
   };
 
   return (
-    <section
-      className={`${className || ""} sections fixed inset-x-0 bottom-0 z-50 w-full shrink-0 md:relative md:inset-auto md:z-auto md:w-64 md:max-w-64`}
-    >
-      <ul
-        ref={menuRef}
-        className="relative flex w-full flex-row items-center justify-between overflow-hidden rounded-t-3xl bg-lp px-5 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-2xl md:min-h-screen! md:flex-col md:items-stretch md:justify-start md:gap-2 md:rounded-none md:py-6 md:pl-5 md:pr-0 md:shadow-none"
+    <>
+      <button
+        type="button"
+        aria-label="Tutup menu"
+        onClick={() => setMobileDrawerOpen(false)}
+        className={`fixed inset-0 z-[55] bg-black/35 backdrop-blur-[2px] transition-opacity duration-300 md:hidden ${mobileMenuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}
+      />
+
+      <section
+        className={`${className || ""} sections fixed left-0 top-0 z-[60] h-[100dvh] w-72 max-w-[86vw] shrink-0 transition-transform duration-300 ease-out md:relative md:inset-auto md:z-auto md:h-screen md:w-64 md:max-w-64 md:translate-x-0 ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <div
-          ref={activeIndicatorRef}
-          className="bottom-menu-active-indicator pointer-events-none absolute top-0 z-0 hidden opacity-0 md:block"
-        />
+        <ul
+          ref={menuRef}
+          className="relative flex h-full min-h-[100dvh] w-full flex-col items-stretch justify-start gap-2 overflow-hidden rounded-r-3xl bg-lp py-6 pl-5 pr-0 shadow-2xl md:rounded-none md:shadow-none"
+        >
+          <div
+            ref={activeIndicatorRef}
+            className="bottom-menu-active-indicator pointer-events-none absolute top-0 z-0 block opacity-0"
+          />
 
-        {/* Header Sidebar (Desktop Only) */}
-        <div className="relative z-10 mb-6 hidden w-full cursor-pointer flex-row items-center justify-start gap-3 px-2 md:flex">
-          <h2 className="text-2xl font-bold text-white no-underline">
-            ChiliVision
-          </h2>
-        </div>
+          <div className="relative z-10 mb-6 flex w-full cursor-pointer flex-row items-center justify-start gap-3 pl-12 pr-5 md:pl-2">
+            <h2 className="text-2xl font-bold text-white no-underline">
+              ChiliVision
+            </h2>
+          </div>
 
-        {bottomMenuItem.map((item) => (
-          <li
-            ref={(node) => {
-              itemRefs.current[item.id] = node;
-            }}
-            className="relative z-10 block! w-full"
-            key={item.id}
-          >
-            <NavLink
-              to={item.to}
-              end={item.to === "/dashboard"}
-              title={item.label}
-              onPointerDown={captureActiveIndicatorPosition}
-              className={({ isActive }) =>
-                `group flex h-12 w-full items-center justify-center rounded-xl text-white/70 transition-colors duration-300 md:h-16 md:justify-start md:gap-4 md:rounded-l-full md:rounded-r-none md:pl-4 md:pr-0
-                ${isActive ? "bg-white/12 md:bg-transparent" : "hover:bg-white/10 md:hover:bg-transparent"}`
-              }
+          {bottomMenuItem.map((item) => (
+            <li
+              ref={(node) => {
+                itemRefs.current[item.id] = node;
+              }}
+              className="relative z-10 block w-full"
+              key={item.id}
             >
-              {({ isActive }) => (
-                <>
-                  <item.icon
-                    size={24}
-                    className={`shrink-0  transition-transform duration-300 ${isActive ? " text-black scale-105" : "group-hover:scale-105"}`}
-                  />
-                  <span
-                    className={`hidden text-sm font-bold  md:block md:text-base ${isActive ? "text-black" : ""}`}
-                  >
-                    {item.label}
-                  </span>
-                </>
-              )}
-            </NavLink>
-          </li>
-        ))}
-
-        {/* Logout (Desktop Only) */}
-        <li className="relative z-10 mt-auto hidden w-full pb-4 md:block">
-          <button
-            onClick={handleLogout}
-            className="group bg-white/12 flex w-full cursor-pointer items-center justify-start gap-4 rounded-l-full px-4 py-2 text-white transition-colors hover:bg-white/10"
-            title="Keluar"
-          >
-            <div className="flex h-10 w-10 items-center justify-center text-white transition-colors">
-              <svg
-                className="h-7 w-7 transition-transform duration-300 group-hover:scale-110"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                strokeWidth="2"
+              <NavLink
+                to={item.to}
+                end={item.to === "/dashboard"}
+                title={item.label}
+                onPointerDown={captureActiveIndicatorPosition}
+                onClick={() => setMobileDrawerOpen(false)}
+                className={({ isActive }) =>
+                  `group flex h-16 w-full items-center justify-start gap-4 rounded-l-full rounded-r-none pl-4 pr-0 text-white/70 transition-colors duration-300
+                  ${isActive ? "bg-transparent" : "hover:bg-white/10 md:hover:bg-transparent"}`
+                }
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                />
-              </svg>
-            </div>
-            <span className="text-sm font-bold text-white">Keluar</span>
-          </button>
-        </li>
-      </ul>
-    </section>
+                {({ isActive }) => (
+                  <>
+                    <item.icon
+                      size={24}
+                      className={`shrink-0 transition-transform duration-300 ${isActive ? "scale-105 text-black" : "group-hover:scale-105"}`}
+                    />
+                    <span
+                      className={`block text-base font-bold ${isActive ? "text-black" : ""}`}
+                    >
+                      {item.label}
+                    </span>
+                  </>
+                )}
+              </NavLink>
+            </li>
+          ))}
+
+          <li className="relative z-10 mt-auto w-full pb-4">
+            <button
+              onClick={handleLogout}
+              className="group flex w-full cursor-pointer items-center justify-start gap-4 rounded-l-full bg-white/12 px-4 py-2 text-white transition-colors hover:bg-white/10"
+              title="Keluar"
+            >
+              <div className="flex h-10 w-10 items-center justify-center text-white transition-colors">
+                <svg
+                  className="h-7 w-7 transition-transform duration-300 group-hover:scale-110"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm font-bold text-white">Keluar</span>
+            </button>
+          </li>
+        </ul>
+      </section>
+    </>
   );
 };
 
 export default BottomMenu;
+
+
+
+

@@ -46,3 +46,23 @@ export const normalisasiBuktiAnalisa = (item) => ({
     kurang: item.foto_kurang || null,
   },
 });
+
+export const hitungCabaiPerSampel = (buktiAktif) => {
+  const totalCabai = Number(buktiAktif?.cabaiTerdeteksi || 0);
+  const proporsi = {
+    lebat: Number(buktiAktif?.parameter?.lebat || 0),
+    sedang: Number(buktiAktif?.parameter?.sedang || 0),
+    kurang: Number(buktiAktif?.parameter?.kurang || 0),
+  };
+  const totalProporsi = proporsi.lebat + proporsi.sedang + proporsi.kurang;
+
+  if (!totalCabai || !totalProporsi) {
+    return { lebat: 0, sedang: 0, kurang: 0 };
+  }
+
+  const lebat = Math.round((totalCabai * proporsi.lebat) / totalProporsi);
+  const sedang = Math.round((totalCabai * proporsi.sedang) / totalProporsi);
+  const kurang = Math.max(totalCabai - lebat - sedang, 0);
+
+  return { lebat, sedang, kurang };
+};

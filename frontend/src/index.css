@@ -192,7 +192,7 @@
 
   /* === 5. CORE APP LAYOUT (DASHBOARD DLL) === */
   .core-layout {
-    @apply w-full max-w-md md:max-w-[1920px] h-screen mx-auto flex flex-col md:flex-row-reverse bg-white font-helvetica overflow-hidden relative;
+    @apply w-full max-w-[1920px] h-screen mx-auto flex flex-col md:flex-row-reverse bg-white font-helvetica overflow-hidden relative;
   }
 
   .core-content {
