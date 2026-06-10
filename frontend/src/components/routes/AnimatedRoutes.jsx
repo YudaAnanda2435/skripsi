@@ -3,7 +3,7 @@ import PageTransition from "../fragments/pageTrasition";
 import { Navigate, Routes, Route, useLocation } from "react-router-dom";
 import LandingPage from "../../pages/landingPage";
 import LoginPage from "../../pages/loginPage";
-import RegisterPage from "../../pages/RegisterPage";
+import RegisterPage from "../../pages/registerPage";
 import DashboardPage from "../../pages/dashboardPage";
 import LahanPage from "../../pages/lahanPage";
 import ScanTonasePage from "../../pages/scanTonasePage";
