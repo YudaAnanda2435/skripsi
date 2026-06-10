@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import api from "../../api/axios";
-import { useLocation} from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 const pagesTitles = {
   "/dashboard": "Dashboard",
   "/lahan": "Lahan",
@@ -12,19 +11,13 @@ const pagesTitles = {
   "/panduan": "Panduan",
 };
 
-const TopNavbar = ({ breadcrumbs }) => {
+const TopNavbar = () => {
   const [namaUser, setNamaUser] = useState("");
   const location = useLocation();
-  const fallbackBreadcrumbs = [
-    { label: pagesTitles[location.pathname] || "Dashboard" },
-  ];
-  const activeBreadcrumbs =
-    breadcrumbs?.length > 0
-      ? breadcrumbs
-      : location.state?.breadcrumbs?.length > 0
-        ? location.state.breadcrumbs
-        : fallbackBreadcrumbs;
-  const hideBreadcrumbs = location.pathname === "/scan-tonase";
+  const pageTitle =
+    Object.entries(pagesTitles).find(([path]) =>
+      location.pathname === path || location.pathname.startsWith(`${path}/`),
+    )?.[1] || "Dashboard";
 
   useEffect(() => {
     const ambilProfil = async () => {
@@ -39,50 +32,11 @@ const TopNavbar = ({ breadcrumbs }) => {
   }, []);
 
   return (
-    <nav className="w-full flex items-center justify-between gap-1.5 md:gap-2 px-5 md:px-5 py-2.5 md:py-3 shrink-0 z-20 bg-[#f6f3eb]">
+    <nav className="relative z-40 flex w-full shrink-0 items-center justify-between gap-1.5 bg-[#f6f3eb] px-5 py-2.5 md:gap-2 md:px-5 md:py-3">
       <div className="min-w-0 flex-1">
-        {hideBreadcrumbs ? (
-          <span className="max-w-[150px] truncate text-[30px] font-bold text-gray-900 transition-colors md:max-w-[240px] md:text-2xl font-jakarta">
-            {pagesTitles[location.pathname] || "Dashboard"}
-          </span>
-        ) : (
-          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-            {activeBreadcrumbs.map((item, index) => {
-              const isActive = index === activeBreadcrumbs.length - 1;
-              const labelClass = `max-w-[150px] truncate text-[30px] font-bold transition-colors md:max-w-[240px] md:text-2xl font-jakarta ${
-                isActive ? "text-gray-900" : "text-gray-400 hover:text-gray-600"
-              }`;
-
-              return (
-                <span
-                  key={`${item.label}-${index}`}
-                  className="flex min-w-0 items-center gap-2"
-                >
-                  {index > 0 && (
-                    <span className="text-lg font-bold font-jakarta text-gray-300 md:text-2xl">
-                      &gt;
-                    </span>
-                  )}
-                  {item.to && !isActive ? (
-                    <Link to={item.to} className={labelClass}>
-                      {item.label}
-                    </Link>
-                  ) : item.onClick && !isActive ? (
-                    <button
-                      type="button"
-                      onClick={item.onClick}
-                      className={`${labelClass} text-left`}
-                    >
-                      {item.label}
-                    </button>
-                  ) : (
-                    <span className={labelClass}>{item.label}</span>
-                  )}
-                </span>
-              );
-            })}
-          </div>
-        )}
+        <span className="block max-w-[150px] truncate text-[30px] font-bold text-gray-900 md:max-w-[240px] md:text-2xl font-jakarta">
+          {pageTitle}
+        </span>
       </div>
       <div className="flex flex-row gap-3 items-center">
         {/* Notification Bell */}

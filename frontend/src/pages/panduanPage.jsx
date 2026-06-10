@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import TopNavbar from "../components/layouts/navbarDashboard";
+import BottomMenu from "../components/layouts/bottomMenu";
 
 const PanduanPage = () => {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const PanduanPage = () => {
       </div>
 
       {/* AREA KONTEN DAFTAR PANDUAN */}
-      <div className="flex-1 overflow-y-auto p-5 pb-10">
+      <div className="flex-1 overflow-y-auto p-5 pb-24 md:pb-10">
         <div className="flex flex-col gap-4">
           <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-2">
             <div className="flex items-center gap-3 mb-2">
@@ -87,6 +88,7 @@ const PanduanPage = () => {
         </div>
       </div>
       </div>
+      <BottomMenu />
     </section>
   );
 };

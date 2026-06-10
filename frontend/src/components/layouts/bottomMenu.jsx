@@ -171,11 +171,11 @@ const BottomMenu = ({ className }) => {
 
   return (
     <section
-      className={`${className || ""} sections relative bottom-0 w-full shrink-0 md:w-64 md:max-w-64`}
+      className={`${className || ""} sections fixed inset-x-0 bottom-0 z-50 w-full shrink-0 md:relative md:inset-auto md:z-auto md:w-64 md:max-w-64`}
     >
       <ul
         ref={menuRef}
-        className="relative flex w-full flex-row items-center justify-between overflow-hidden rounded-t-3xl bg-lp px-5 py-3 shadow-2xl md:min-h-screen! md:flex-col md:items-stretch md:justify-start md:gap-2 md:rounded-none md:py-6 md:pl-5 md:pr-0 md:shadow-none"
+        className="relative flex w-full flex-row items-center justify-between overflow-hidden rounded-t-3xl bg-lp px-5 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-2xl md:min-h-screen! md:flex-col md:items-stretch md:justify-start md:gap-2 md:rounded-none md:py-6 md:pl-5 md:pr-0 md:shadow-none"
       >
         <div
           ref={activeIndicatorRef}

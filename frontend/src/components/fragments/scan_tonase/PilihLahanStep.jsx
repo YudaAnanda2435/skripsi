@@ -4,9 +4,12 @@ import {
   MapPin,
   Maximize2,
   MoreVertical,
+  Plus,
+  Scale,
   Search,
   Sprout,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import farmPlaceholder from "../../../assets/img/dashboard/farm-placeholder.png";
 import { lahanThumbnails, tabLahan } from "./scanTonaseConstants";
 import { formatAngka } from "./scanTonaseUtils";
@@ -73,13 +76,23 @@ const PilihLahanStep = ({
         </p>
       </div>
     ) : daftarLahan.length === 0 ? (
-      <div className="rounded-xl border border-dashed border-gray-300 bg-white/70 p-8 text-center">
-        <h3 className="text-lg font-bold text-gray-800">
+      <div className="flex flex-col items-center justify-center rounded-xl bg-white/70 p-10 text-center">
+        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gray-100 text-gray-400">
+          <Scale className="h-10 w-10" strokeWidth={2.2} />
+        </div>
+        <h3 className="text-xl font-extrabold text-gray-500">
           Belum Ada Lahan
         </h3>
-        <p className="mt-2 text-sm text-gray-500">
-          Anda belum mendaftarkan lahan. Tambahkan lahan baru untuk memulai scan tonase.
+        <p className="mt-5 max-w-2xl text-[16px] leading-6 text-gray-400">
+          Anda belum mendaftarkan lahan. Tambahkan lahan baru untuk menghitung panen.
         </p>
+        <Link
+          to="/lahan"
+          className="mt-8 inline-flex h-14 items-center justify-center gap-3 rounded-lg bg-[#7a8f83] px-7 text-base font-extrabold text-white shadow-sm transition-colors hover:bg-[#667b70] active:scale-95"
+        >
+          <Plus className="h-5 w-5" strokeWidth={2.6} />
+          Tambah Lahan
+        </Link>
       </div>
     ) : daftarLahanTampil.length === 0 ? (
       <div className="rounded-xl border border-dashed border-gray-300 bg-white/70 p-8 text-center">
