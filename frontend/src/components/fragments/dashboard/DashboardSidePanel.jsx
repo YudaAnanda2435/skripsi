@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import { useEffect, useState } from "react";
 import { LineChart, lineElementClasses } from "@mui/x-charts/LineChart";
 
 const formatChartValue = (value) => {
@@ -8,8 +8,25 @@ const formatChartValue = (value) => {
   return `${value}`;
 };
 
+const useIsMobileChart = () => {
+  const [isMobileChart, setIsMobileChart] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(max-width: 767px)").matches;
+  });
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const handleChange = (event) => setIsMobileChart(event.matches);
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  return isMobileChart;
+};
+
 const DashboardSidePanel = ({ dataBulanan }) => {
-  const isMobileChart = useMediaQuery("(max-width: 767px)");
+  const isMobileChart = useIsMobileChart();
   const chartData = dataBulanan.map((item) => Number(item.value) || 0);
   const chartLabels = dataBulanan.map((item) => item.label);
   const chartHeight = isMobileChart ? 180 : 210;
@@ -119,3 +136,4 @@ const DashboardSidePanel = ({ dataBulanan }) => {
 };
 
 export default DashboardSidePanel;
+
