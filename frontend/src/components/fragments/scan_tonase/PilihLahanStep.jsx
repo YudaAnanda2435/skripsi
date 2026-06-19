@@ -114,7 +114,7 @@ const PilihLahanStep = ({
               onClick={() => pilihLahan(lahan)}
               className="group flex cursor-pointer flex-col gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-[0_4px_24px_rgba(23,61,45,0.04)] transition-colors hover:border-[#316947]/40 active:scale-[0.99] md:min-h-[182px] md:flex-row md:gap-6"
             >
-              <div className="h-36 w-full shrink-0 overflow-hidden rounded-lg bg-[#f1eee6] md:h-[140px] md:w-[140px]">
+              <div className="h-60 w-full shrink-0 overflow-hidden rounded-lg bg-[#f1eee6] md:h-[140px] md:w-[140px]">
                 <img
                   src={lahanThumbnails[index % lahanThumbnails.length]}
                   alt={lahan.nama_lahan || "Foto lahan"}

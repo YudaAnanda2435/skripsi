@@ -56,7 +56,8 @@ class LahanBase(BaseModel):
     populasi_pohon: int
 
 class LahanCreate(LahanBase):
-    pass
+    tanggal_tanam: Optional[str] = None
+    tanggal_panen: Optional[str] = None
 
 # Skema baru untuk fitur Edit Data Lahan
 class LahanUpdate(BaseModel):

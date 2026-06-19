@@ -164,7 +164,7 @@ const HasilEstimasiStep = ({
                   onClick={() => setLightboxIndex(index)}
                   className="group text-left"
                 >
-                  <div className="relative h-36 overflow-hidden rounded-xl border border-[#dcdad2] bg-black shadow-sm">
+                  <div className="relative h-60 overflow-hidden rounded-xl border border-[#dcdad2] bg-black shadow-sm">
                     <img
                       src={normalisasiSrcGambar(fotoHasilAI[kategori.id])}
                       alt={`Hasil AI kondisi ${kategori.label}`}

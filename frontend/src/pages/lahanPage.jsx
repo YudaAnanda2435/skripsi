@@ -62,6 +62,7 @@ const LahanPage = () => {
     luas_area: "",
     populasi_pohon: "",
     tanggal_tanam: "",
+    tanggal_panen: "",
   });
 
   const [inputTonase, setInputTonase] = useState("");
@@ -133,7 +134,7 @@ const LahanPage = () => {
         populasi_pohon: parseInt(formLahan.populasi_pohon),
       });
 
-      setDaftarLahan([...daftarLahan, response.data]);
+      setDaftarLahan([response.data, ...daftarLahan]);
       setIsModalTambahBuka(false);
       setFormLahan({ nama_lahan: "", varietas: "", luas_area: "", populasi_pohon: "" });
       showToast(`Lahan "${response.data.nama_lahan}" berhasil ditambahkan!`, "success");
@@ -152,6 +153,7 @@ const LahanPage = () => {
       luas_area: lahanAktif.luas_area,
       populasi_pohon: lahanAktif.populasi_pohon,
       tanggal_tanam: lahanAktif.tanggal_tanam || "",
+      tanggal_panen: lahanAktif.tanggal_panen || "",
     });
     setIsModalEditBuka(true);
   };
@@ -166,6 +168,7 @@ const LahanPage = () => {
         luas_area: parseFloat(formEditLahan.luas_area),
         populasi_pohon: parseInt(formEditLahan.populasi_pohon),
         tanggal_tanam: formEditLahan.tanggal_tanam || null,
+        tanggal_panen: formEditLahan.tanggal_panen || null,
       });
 
       const lahanDiperbarui = response.data;
@@ -380,7 +383,7 @@ const LahanPage = () => {
                 <h3 className="mb-5 text-[28px] font-extrabold leading-9 text-black">
                   Informasi Pertanian
                 </h3>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
                   <div className="rounded-2xl border border-gray-100 bg-white p-7 shadow-[0_4px_24px_rgba(23,61,45,0.04)] transition-colors hover:border-[#316947]/30">
                     <div className="mb-6 flex items-center gap-4">
                       <Leaf
@@ -440,6 +443,21 @@ const LahanPage = () => {
                       {lahanAktif.tanggal_tanam || "-"}
                     </p>
                   </div>
+
+                  <div className="rounded-2xl border border-gray-100 bg-white p-7 shadow-[0_4px_24px_rgba(23,61,45,0.04)] transition-colors hover:border-[#316947]/30">
+                    <div className="mb-6 flex items-center gap-4">
+                      <CalendarDays
+                        className="h-6 w-6 text-[#002719]"
+                        strokeWidth={2.4}
+                      />
+                      <p className="text-sm font-semibold text-gray-600">
+                        Perkiraan Panen
+                      </p>
+                    </div>
+                    <p className="text-[20px] font-medium text-black">
+                      {lahanAktif.tanggal_panen || "-"}
+                    </p>
+                  </div>
                 </div>
               </section>
 
@@ -458,7 +476,7 @@ const LahanPage = () => {
                         ],
                       }}
                     >
-                      <button className="flex h-[72px] w-full items-center justify-center gap-3 rounded-xl bg-[#002719] px-8 text-[17px] font-extrabold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:bg-[#173d2d] active:scale-[0.99]">
+                      <button className="flex py-4 w-full items-center justify-center gap-3 rounded-sm bg-[#002719] px-8 text-[17px] font-extrabold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:bg-[#173d2d] active:scale-[0.99]">
                         <BrainCircuit className="h-6 w-6" strokeWidth={2.4} />
                         Mulai Estimasi YOLOv8
                       </button>
@@ -467,7 +485,7 @@ const LahanPage = () => {
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <button
                         onClick={() => setIsModalPanenBuka(true)}
-                        className="flex h-16 w-full items-center justify-center gap-3 rounded-xl border border-gray-300 bg-white px-6 text-[17px] font-extrabold text-black shadow-[0_4px_24px_rgba(23,61,45,0.04)] transition-colors hover:bg-[#f6f3eb]"
+                        className="flex py-4 rounded-sm w-full items-center justify-center gap-3 border border-gray-300 bg-white px-6 text-[17px] font-extrabold text-black shadow-[0_4px_24px_rgba(23,61,45,0.04)] transition-colors hover:bg-[#f6f3eb]"
                       >
                         <CheckCircle2 className="h-6 w-6 text-[#002719]" />
                         Tandai Sudah Panen
@@ -475,7 +493,7 @@ const LahanPage = () => {
 
                       <button
                         onClick={bukaModalEdit}
-                        className="flex h-16 w-full items-center justify-center gap-3 rounded-xl border border-gray-300 bg-white px-6 text-[17px] font-extrabold text-black shadow-[0_4px_24px_rgba(23,61,45,0.04)] transition-colors hover:bg-[#f6f3eb]"
+                        className="flex w-full items-center justify-center gap-3 flex  rounded-sm  border border-gray-300 bg-white px-6 text-[17px] font-extrabold text-black shadow-[0_4px_24px_rgba(23,61,45,0.04)] transition-colors hover:bg-[#f6f3eb]"
                       >
                         <Edit3 className="h-6 w-6 text-[#002719]" />
                         Edit Data Lahan
@@ -496,7 +514,7 @@ const LahanPage = () => {
 
                 <button
                   onClick={() => hapusLahan(lahanAktif.id)}
-                  className="mt-3 flex h-16 w-full items-center justify-center gap-3 rounded-xl border border-red-100 bg-red-50 px-6 text-[17px] font-extrabold text-red-600 transition-colors hover:bg-red-100"
+                  className="mt-3 flex py-4 w-full items-center justify-center gap-3 rounded-sm border border-red-100 bg-red-50 px-6 text-[17px] font-extrabold text-red-600 transition-colors hover:bg-red-100"
                 >
                   <Trash2 className="h-6 w-6" />
                   Hapus Lahan
@@ -609,7 +627,7 @@ const LahanPage = () => {
                         onClick={() => setLahanAktif(lahan)}
                         className="group flex cursor-pointer flex-col gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-[0_4px_24px_rgba(23,61,45,0.04)] transition-colors hover:border-[#316947]/40 active:scale-[0.99] md:min-h-[182px] md:flex-row md:gap-6"
                       >
-                        <div className="h-36 w-full shrink-0 overflow-hidden rounded-lg bg-[#f1eee6] md:h-[140px] md:w-[140px]">
+                        <div className="h-60 w-full shrink-0 overflow-hidden rounded-lg bg-[#f1eee6] md:h-[140px] md:w-[140px]">
                           <img
                             src={
                               lahanThumbnails[index % lahanThumbnails.length]
@@ -825,6 +843,17 @@ const LahanPage = () => {
                 className="w-full p-3 border border-gray-200 rounded-xl text-sm"
               />
 
+              <label className="text-xs text-gray-500 font-bold -mb-2">
+                Tanggal Perkiraan Panen
+              </label>
+              <input
+                type="date"
+                name="tanggal_panen"
+                value={formEditLahan.tanggal_panen}
+                onChange={tanganiPerubahanEdit}
+                className="w-full p-3 border border-gray-200 rounded-xl text-sm"
+              />
+
               <button
                 type="submit"
                 className="w-full mt-3 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md"
@@ -879,3 +908,4 @@ const LahanPage = () => {
 };
 
 export default LahanPage;
+

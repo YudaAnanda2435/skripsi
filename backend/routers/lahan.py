@@ -10,7 +10,15 @@ router = APIRouter(prefix="/lahan", tags=["Lahan"])
 
 @router.post("", response_model=schemas_user.LahanResponse)
 def tambah_lahan(lahan: schemas_user.LahanCreate, db: Session = Depends(get_db), pengguna_saat_ini: models_user.User = Depends(get_current_user)):
-    lahan_baru = models_user.Lahan(nama_lahan=lahan.nama_lahan, varietas=lahan.varietas, luas_area=lahan.luas_area, populasi_pohon=lahan.populasi_pohon, user_id=pengguna_saat_ini.id)
+    lahan_baru = models_user.Lahan(
+        nama_lahan=lahan.nama_lahan,
+        varietas=lahan.varietas,
+        luas_area=lahan.luas_area,
+        populasi_pohon=lahan.populasi_pohon,
+        tanggal_tanam=lahan.tanggal_tanam,
+        tanggal_panen=lahan.tanggal_panen,
+        user_id=pengguna_saat_ini.id,
+    )
     db.add(lahan_baru)
     db.commit()
     db.refresh(lahan_baru)
@@ -18,14 +26,14 @@ def tambah_lahan(lahan: schemas_user.LahanCreate, db: Session = Depends(get_db),
 
 @router.get("", response_model=list[schemas_user.LahanResponse])
 def baca_daftar_lahan(db: Session = Depends(get_db), pengguna_saat_ini: models_user.User = Depends(get_current_user)):
-    return db.query(models_user.Lahan).filter(models_user.Lahan.user_id == pengguna_saat_ini.id).all()
+    return db.query(models_user.Lahan).filter(models_user.Lahan.user_id == pengguna_saat_ini.id).order_by(models_user.Lahan.id.desc()).all()
 
 @router.put("/{lahan_id}", response_model=schemas_user.LahanResponse)
 def perbarui_lahan(lahan_id: int, data_update: schemas_user.LahanUpdate, db: Session = Depends(get_db), pengguna_saat_ini: models_user.User = Depends(get_current_user)):
     lahan = db.query(models_user.Lahan).filter(models_user.Lahan.id == lahan_id, models_user.Lahan.user_id == pengguna_saat_ini.id).first()
     if not lahan:
         raise HTTPException(status_code=404, detail="Lahan tidak ditemukan")
-    for kunci, nilai in data_update.dict(exclude_unset=True).items():
+    for kunci, nilai in data_update.model_dump(exclude_unset=True).items():
         setattr(lahan, kunci, nilai)
     db.commit()
     db.refresh(lahan)

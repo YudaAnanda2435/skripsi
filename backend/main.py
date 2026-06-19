@@ -5,11 +5,26 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.database import engine, Base
+from sqlalchemy import inspect, text
 from routers import auth, lahan, deteksi, harga, riwayat
 
 load_dotenv()
 
 Base.metadata.create_all(bind=engine)
+
+
+def ensure_lahan_tanggal_panen_column():
+    inspector = inspect(engine)
+    if "lahan" not in inspector.get_table_names():
+        return
+
+    column_names = {column["name"] for column in inspector.get_columns("lahan")}
+    if "tanggal_panen" not in column_names:
+        with engine.begin() as connection:
+            connection.execute(text("ALTER TABLE lahan ADD COLUMN tanggal_panen VARCHAR"))
+
+
+ensure_lahan_tanggal_panen_column()
 
 app = FastAPI(title="ChiliVision API")
 
